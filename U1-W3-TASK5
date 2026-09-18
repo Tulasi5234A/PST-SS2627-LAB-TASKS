@@ -1,0 +1,108 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+class Student {
+    private int id;
+    private String name;
+    private double cgpa;
+
+    public Student(int id, String name, double cgpa) {
+        this.id = id;
+        this.name = name;
+        this.cgpa = cgpa;
+    }
+
+    public int getID() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getCGPA() {
+        return cgpa;
+    }
+}
+
+class Priorities {
+    public List<Student> getStudents(List<String> events) {
+        List<Student> students = new ArrayList<>();
+
+        for (String event : events) {
+            String[] p = event.split(" ");
+
+            if (p[0].equals("ENTER")) {
+                students.add(new Student(
+                    Integer.parseInt(p[3]),
+                    p[1],
+                    Double.parseDouble(p[2])
+                ));
+            } else if (!students.isEmpty()) {
+                int index = 0;
+
+                for (int i = 1; i < students.size(); i++) {
+                    Student a = students.get(i);
+                    Student b = students.get(index);
+
+                    if (a.getCGPA() > b.getCGPA() ||
+                        (a.getCGPA() == b.getCGPA() &&
+                         a.getName().compareTo(b.getName()) < 0) ||
+                        (a.getCGPA() == b.getCGPA() &&
+                         a.getName().equals(b.getName()) &&
+                         a.getID() < b.getID())) {
+                        index = i;
+                    }
+                }
+
+                students.remove(index);
+            }
+        }
+
+        for (int i = 0; i < students.size(); i++) {
+            for (int j = i + 1; j < students.size(); j++) {
+                Student a = students.get(i);
+                Student b = students.get(j);
+
+                if (b.getCGPA() > a.getCGPA() ||
+                    (b.getCGPA() == a.getCGPA() &&
+                     b.getName().compareTo(a.getName()) < 0) ||
+                    (b.getCGPA() == a.getCGPA() &&
+                     b.getName().equals(a.getName()) &&
+                     b.getID() < a.getID())) {
+                    students.set(i, b);
+                    students.set(j, a);
+                }
+            }
+        }
+
+        return students;
+    }
+}
+
+
+
+public class Solution {
+    private final static Scanner scan = new Scanner(System.in);
+    private final static Priorities priorities = new Priorities();
+    
+    public static void main(String[] args) {
+        int totalEvents = Integer.parseInt(scan.nextLine());    
+        List<String> events = new ArrayList<>();
+        
+        while (totalEvents-- != 0) {
+            String event = scan.nextLine();
+            events.add(event);
+        }
+        
+        List<Student> students = priorities.getStudents(events);
+        
+        if (students.isEmpty()) {
+            System.out.println("EMPTY");
+        } else {
+            for (Student st: students) {
+                System.out.println(st.getName());
+            }
+        }
+    }
+}
