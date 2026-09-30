@@ -1,0 +1,94 @@
+import java.util.*;
+
+public class Solution {
+
+    public static void matrixRotation(List<List<Integer>> matrix, int r) {
+        int m = matrix.size();
+        int n = matrix.get(0).size();
+
+        for (int layer = 0; layer < Math.min(m, n) / 2; layer++) {
+
+            int top = layer;
+            int bottom = m - 1 - layer;
+            int left = layer;
+            int right = n - 1 - layer;
+
+            List<Integer> elements = new ArrayList<>();
+
+            for (int i = top; i <= bottom; i++) {
+                elements.add(matrix.get(i).get(left));
+            }
+
+            for (int j = left + 1; j <= right; j++) {
+                elements.add(matrix.get(bottom).get(j));
+            }
+
+            for (int i = bottom - 1; i >= top; i--) {
+                elements.add(matrix.get(i).get(right));
+            }
+
+            for (int j = right - 1; j > left; j--) {
+                elements.add(matrix.get(top).get(j));
+            }
+
+            int size = elements.size();
+            int shift = r % size;
+
+            int index = (size - shift) % size;
+
+            for (int i = top; i <= bottom; i++) {
+                matrix.get(i).set(left, elements.get(index));
+                index = (index + 1) % size;
+            }
+
+            for (int j = left + 1; j <= right; j++) {
+                matrix.get(bottom).set(j, elements.get(index));
+                index = (index + 1) % size;
+            }
+
+            for (int i = bottom - 1; i >= top; i--) {
+                matrix.get(i).set(right, elements.get(index));
+                index = (index + 1) % size;
+            }
+
+            for (int j = right - 1; j > left; j--) {
+                matrix.get(top).set(j, elements.get(index));
+                index = (index + 1) % size;
+            }
+        }
+
+        for (List<Integer> row : matrix) {
+            for (int i = 0; i < row.size(); i++) {
+                if (i > 0) {
+                    System.out.print(" ");
+                }
+                System.out.print(row.get(i));
+            }
+            System.out.println();
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int m = sc.nextInt();
+        int n = sc.nextInt();
+        int r = sc.nextInt();
+
+        List<List<Integer>> matrix = new ArrayList<>();
+
+        for (int i = 0; i < m; i++) {
+            List<Integer> row = new ArrayList<>();
+
+            for (int j = 0; j < n; j++) {
+                row.add(sc.nextInt());
+            }
+
+            matrix.add(row);
+        }
+
+        matrixRotation(matrix, r);
+
+        sc.close();
+    }
+}
