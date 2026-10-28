@@ -1,0 +1,81 @@
+import java.util.Scanner;
+
+interface Payment {
+    double pay(double amount);
+}
+
+class CreditCardPayment implements Payment {
+    @Override
+    public double pay(double amount) {
+        return amount * 1.02;
+    }
+}
+
+class UPIPayment implements Payment {
+    @Override
+    public double pay(double amount) {
+        return amount * 1.01;
+    }
+}
+
+class NetBankingPayment implements Payment {
+    @Override
+    public double pay(double amount) {
+        return amount * 1.015;
+    }
+}
+
+abstract class PaymentProcessor {
+    abstract double processPayment(Payment payment, double amount);
+}
+
+class OnlinePaymentProcessor extends PaymentProcessor {
+    @Override
+    double processPayment(Payment payment, double amount) {
+        return payment.pay(amount);
+    }
+}
+
+public class Solution {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        if (!sc.hasNextInt()) {
+            sc.close();
+            return;
+        }
+
+        int n = sc.nextInt();
+        PaymentProcessor processor = new OnlinePaymentProcessor();
+
+        for (int i = 0; i < n; i++) {
+            int paymentType = sc.nextInt();
+            double amount = sc.nextDouble();
+
+            Payment payment = null;
+            String typeName = "";
+
+            switch (paymentType) {
+                case 1:
+                    payment = new CreditCardPayment();
+                    typeName = "CreditCard";
+                    break;
+                case 2:
+                    payment = new UPIPayment();
+                    typeName = "UPI";
+                    break;
+                case 3:
+                    payment = new NetBankingPayment();
+                    typeName = "NetBanking";
+                    break;
+                default:
+                    continue;
+            }
+
+            double finalAmount = processor.processPayment(payment, amount);
+            System.out.printf("%s %.2f\n", typeName, finalAmount);
+        }
+
+        sc.close();
+    }
+}
